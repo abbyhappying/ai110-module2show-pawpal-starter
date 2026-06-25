@@ -2,14 +2,67 @@ classDiagram
     %% Replace the placeholders below with your actual classes, attributes, methods, and relationships.
     %% Keep this file updated so it matches your final implementation.
 
-    class ClassName {
-        +type attribute
-        +method() returnType
-    }
+classDiagram
 
-    class AnotherClass {
-        +type attribute
-        +method() returnType
-    }
+class Owner {
+  +str id
+  +str name
+  +str email
+  +List~Pet~ pets
 
-    ClassName --> AnotherClass : relationship
+  +add_pet(pet: Pet)
+  +remove_pet(pet_id: str)
+  +get_pet(pet_id: str) Pet
+}
+
+class Pet {
+  +str id
+  +str name
+  +str species
+  +int age
+  +str breed
+
+  +get_active_tasks() List~Task~
+}
+
+class Task {
+  +str id
+  +str name
+  +TaskType task_type
+  +int priority
+  +int duration_minutes
+  +bool completed
+
+  +mark_complete()
+  +mark_incomplete()
+  +get_priority_score() float
+
+  +as_feeding_task(food_type: str, amount: float)
+  +as_walk_task(distance_km: float, location: str)
+  +as_medication_task(medication_name: str, dosage: str)
+}
+
+class Schedule {
+  +List~Task~ scheduled_tasks
+
+  +add_task(task: Task)
+  +remove_task(task_id: str)
+  +get_tasks_by_pet(pet_id: str) List~Task~
+  +generate_daily_plan() List~Task~
+  +sort_by_priority()
+  +filter_by_available_time(total_minutes: int) List~Task~
+}
+
+class TaskType {
+  <<enumeration>>
+  FEEDING
+  WALK
+  MEDICATION
+}
+
+%% Relationships
+Owner "1" --> "*" Pet : owns
+Pet "1" --> "*" Task : has
+Owner --> Schedule : uses
+Schedule --> Task : manages
+Schedule --> Pet : references
