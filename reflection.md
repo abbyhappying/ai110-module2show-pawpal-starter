@@ -37,13 +37,17 @@ I got recommendation to group tasks by time, I adopt this recommendation since i
 **a. How you used AI**
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
+I used AI to suggest UML class structures and relationships and ask AI to debugging.AI suggested defaultdict for cleaner conflict detection (O(n) vs O(n²))
+
 - What kinds of prompts or questions were most helpful?
+"What's the best way to detect time conflicts?"
+"Help me write tests for recurring tasks"
 
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
-
+I rejected AI suggestion of using complex topological sorting for task dependencies because pet owners don't need complex dependency graphs.
 ---
 
 ## 4. Testing and Verification
@@ -51,12 +55,16 @@ I got recommendation to group tasks by time, I adopt this recommendation since i
 **a. What you tested**
 
 - What behaviors did you test?
+Priority-based and time-based sorting.
+Identifying overlapping time slots
+Filtering tasks within available minutes.
 - Why were these tests important?
-
+It ensure the scheduler produces realistic, conflict-free plans that busy pet owners can actually follow.
 **b. Confidence**
 
-- How confident are you that your scheduler works correctly?
+- How confident are you that your scheduler works correctly? 85% confident
 - What edge cases would you test next if you had more time?
+I might test multiple pets with simultaneous tasks.
 
 ---
 
@@ -65,11 +73,13 @@ I got recommendation to group tasks by time, I adopt this recommendation since i
 **a. What went well**
 
 - What part of this project are you most satisfied with?
+It's fun to interact with AI to help update and debug the code.
 
 **b. What you would improve**
 
-- If you had another iteration, what would you improve or redesign?
+- If you had another iteration, what would you improve or redesign? Add break time between tasks.
 
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+Simple solutions often work best. The scheduler doesn't need complex graph algorithms or AI optimization. 

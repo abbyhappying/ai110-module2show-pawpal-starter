@@ -1,0 +1,68 @@
+classDiagram
+    class Owner {
+        +str id
+        +str name
+        +str email
+        +List~Pet~ pets
+        +add_pet(pet: Pet)
+        +remove_pet(pet_id: str)
+        +get_pet(pet_id: str) Pet
+        +get_all_tasks() List~Task~
+    }
+
+    class Pet {
+        +str id
+        +str name
+        +str species
+        +int age
+        +str breed
+        +List~Task~ tasks
+        +add_task(task: Task)
+        +remove_task(task_id: str)
+        +get_active_tasks() List~Task~
+    }
+
+    class Task {
+        +str id
+        +str name
+        +TaskType task_type
+        +int priority
+        +int duration_minutes
+        +bool completed
+        +str pet_id
+        +str time_of_day
+        +str frequency
+        +date due_date
+        +mark_complete()
+        +mark_incomplete()
+        +get_priority_score() float
+        +as_feeding_task(food_type: str, amount: float)
+        +as_walk_task(distance_km: float, location: str)
+        +as_medication_task(medication_name: str, dosage: str)
+    }
+
+    class Scheduler {
+        +List~Task~ scheduled_tasks
+        +add_task(task: Task)
+        +remove_task(task_id: str)
+        +get_tasks_by_pet(pet_id: str) List~Task~
+        +generate_daily_plan(total_minutes: int, preference: str) List~Task~
+        +sort_by_priority()
+        +sort_by_time()
+        +filter_by_pet(pet_id: str) List~Task~
+        +filter_by_status(completed: bool) List~Task~
+        +detect_conflicts() List~Tuple~Task, Task~~
+        +get_conflict_warning() str
+        +filter_by_available_time(total_minutes: int) List~Task~
+    }
+
+    class TaskType {
+        <<enumeration>>
+        FEEDING
+        WALK
+        MEDICATION
+    }
+
+    Owner "1" --> "*" Pet : owns
+    Pet "1" --> "*" Task : has
+    Scheduler --> Task : manages

@@ -100,7 +100,8 @@ if selected_pet is not None:
             st.rerun()
 
     if selected_pet.tasks:
-        pet_tasks = sorted(selected_pet.tasks, key=lambda task: task.time_of_day or "00:00")
+        scheduler.sort_by_time()
+        pet_tasks = scheduler.filter_by_pet(selected_pet.id)
         st.write("Tasks for this pet")
         st.table(
             [
@@ -118,6 +119,8 @@ if selected_pet is not None:
         conflict_warning = scheduler.get_conflict_warning()
         if conflict_warning:
             st.warning(conflict_warning)
+        else:
+            st.success("No time conflicts detected for this pet.")
     else:
         st.info("No tasks scheduled yet for this pet.")
 else:
@@ -130,16 +133,29 @@ if st.button("Generate schedule"):
     if not scheduler.scheduled_tasks:
         st.warning("Add at least one task before generating a schedule.")
     else:
-        pet_tasks = [task for task in scheduler.scheduled_tasks if task.pet_id == selected_pet.id] if selected_pet is not None else scheduler.scheduled_tasks
-        plan = sorted(
-            pet_tasks,
-            key=lambda task: (task.time_of_day or "00:00", -task.priority),
-        )
+        if selected_pet is not None:
+            pet_tasks = scheduler.filter_by_pet(selected_pet.id)
+        else:
+            pet_tasks = scheduler.scheduled_tasks
+
+        scheduler.sort_by_time()
+        plan = scheduler.generate_daily_plan(total_minutes=int(available_minutes), preference=preference)
+        plan = [task for task in plan if task in pet_tasks]
         st.success(f"Created a plan with {len(plan)} task(s) for {selected_pet.name if selected_pet else 'all pets'}.")
 
-        for task in plan:
-            pet_name = selected_pet.name if selected_pet is not None else owner.get_pet(task.pet_id).name if task.pet_id else "Unknown pet"
-            st.write(f"{task.time_of_day or 'unscheduled'} — {pet_name}: {task.name} ({task.task_type.value})")
+        if plan:
+            plan_table = [
+                {
+                    "Time": task.time_of_day,
+                    "Task": task.name,
+                    "Pet": selected_pet.name if selected_pet is not None else owner.get_pet(task.pet_id).name if task.pet_id else "Unknown pet",
+                    "Priority": task.priority,
+                }
+                for task in plan
+            ]
+            st.table(plan_table)
+        else:
+            st.info("No tasks fit within the available time window.")
 
         skipped = [task.name for task in pet_tasks if task not in plan]
         if skipped:
