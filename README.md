@@ -46,6 +46,12 @@ pip install -r requirements.txt
 
 Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
 
+Today's Schedule
+--------------------
+07:00 - Luna: Morning feeding [feeding]
+12:30 - Luna: Noon walk [walk]
+19:00 - Max: Evening medication [medication]
+
 ```
 # e.g.:
 # Daily plan for Biscuit (Golden Retriever):

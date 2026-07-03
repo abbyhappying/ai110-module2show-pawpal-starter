@@ -6,13 +6,15 @@
 
 - Briefly describe your initial UML design.
 - What classes did you include, and what responsibilities did you assign to each?
+The system helps owners organize daily tasks, prioritize what's important, and create feasible schedules within available time constraints.
+Class owner	manages pet owner data and their pets, class Pet stores pet info and manages its tasks,
+class Task represents a care activity with type, priority, duration.Class Schedule creates daily plans, sorts, and filters tasks,class TaskType	enum for valid task categories.
 
 **b. Design changes**
 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
-
----
+Yes, I changed my design, AI find out the bottleneck that task has no link to a pet, so I add task.pet_id = self.id inside add_task, I add method to Pet class,Pet.add_task and Pet.remove_task.
 
 ## 2. Scheduling Logic and Tradeoffs
 

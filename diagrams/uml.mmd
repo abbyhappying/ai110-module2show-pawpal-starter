@@ -21,7 +21,10 @@ class Pet {
   +str species
   +int age
   +str breed
+  +List~Task~ tasks
 
+  +add_task(task: Task)
+  +remove_task(task_id: str)
   +get_active_tasks() List~Task~
 }
 
@@ -32,6 +35,7 @@ class Task {
   +int priority
   +int duration_minutes
   +bool completed
+  +str pet_id
 
   +mark_complete()
   +mark_incomplete()
@@ -42,7 +46,7 @@ class Task {
   +as_medication_task(medication_name: str, dosage: str)
 }
 
-class Schedule {
+class Scheduler {
   +List~Task~ scheduled_tasks
 
   +add_task(task: Task)
