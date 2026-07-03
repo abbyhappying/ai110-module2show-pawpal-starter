@@ -22,11 +22,13 @@ Yes, I changed my design, AI find out the bottleneck that task has no link to a 
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
+Time constraints stops scheduling when time runs out.Pet owners have busy lives. They need to know if their care tasks fit within their available time. Priority constraints because some tasks are more critical than others.The system ensures important tasks get scheduled first. Time is the biggest constraint since people have limited time. Priority helps decide what's essential.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+I got recommendation to group tasks by time, I adopt this recommendation since it reduced time complexity from O(n²) to O(n), groups are easier to work with.
 
 ---
 

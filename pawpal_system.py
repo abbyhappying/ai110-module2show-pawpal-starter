@@ -1,4 +1,5 @@
 # models.py
+from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import List, Optional
 import uuid
@@ -18,7 +19,8 @@ class Task:
                  completed: bool = False,
                  pet_id: Optional[str] = None,
                  time_of_day: Optional[str] = None,
-                 frequency: str = "daily"):
+                 frequency: str = "daily",
+                 due_date: Optional[date] = None):
         self.id = id if id is not None else str(uuid.uuid4())[:8]
         self.name = name
         self.task_type = task_type
@@ -28,10 +30,41 @@ class Task:
         self.pet_id = pet_id
         self.time_of_day = time_of_day or ""
         self.frequency = frequency
+        self.due_date = due_date or date.today()
 
     def mark_complete(self) -> None:
-        """Mark this task as complete"""
+        """Mark this task as complete and create the next occurrence if recurring."""
         self.completed = True
+
+        if self.frequency.lower() == "daily":
+            self.due_date = date.today() + timedelta(days=1)
+            return Task(
+                name=self.name,
+                task_type=self.task_type,
+                priority=self.priority,
+                duration_minutes=self.duration_minutes,
+                completed=False,
+                pet_id=self.pet_id,
+                time_of_day=self.time_of_day,
+                frequency=self.frequency,
+                due_date=self.due_date,
+            )
+
+        if self.frequency.lower() == "weekly":
+            self.due_date = date.today() + timedelta(days=7)
+            return Task(
+                name=self.name,
+                task_type=self.task_type,
+                priority=self.priority,
+                duration_minutes=self.duration_minutes,
+                completed=False,
+                pet_id=self.pet_id,
+                time_of_day=self.time_of_day,
+                frequency=self.frequency,
+                due_date=self.due_date,
+            )
+
+        return None
 
     def mark_incomplete(self) -> None:
         """Mark this task as incomplete"""
@@ -158,6 +191,40 @@ class Scheduler:
         """Sort tasks by priority (highest first)"""
         self.scheduled_tasks.sort(key=lambda task: task.priority, reverse=True)
 
+    def sort_by_time(self) -> None:
+        """Sort tasks by their time attribute using a HH:MM-compatible key."""
+        self.scheduled_tasks.sort(key=lambda task: task.time_of_day or "00:00")
+
+    def filter_by_pet(self, pet_id: str) -> List[Task]:
+        """Return tasks belonging to a specific pet."""
+        return [task for task in self.scheduled_tasks if task.pet_id == pet_id]
+
+    def filter_by_status(self, completed: bool) -> List[Task]:
+        """Return tasks matching the requested completion status."""
+        return [task for task in self.scheduled_tasks if task.completed is completed]
+
+    def detect_conflicts(self) -> List[tuple[Task, Task]]:
+        """Detect tasks that share the same time slot."""
+        conflicts: List[tuple[Task, Task]] = []
+        seen = set()
+        for index, task in enumerate(self.scheduled_tasks):
+            for other in self.scheduled_tasks[index + 1:]:
+                if task.time_of_day and task.time_of_day == other.time_of_day:
+                    pair = tuple(sorted((task.id, other.id)))
+                    if pair not in seen:
+                        seen.add(pair)
+                        conflicts.append((task, other))
+        return conflicts
+
+    def get_conflict_warning(self) -> Optional[str]:
+        """Return a lightweight warning message if tasks overlap in time."""
+        conflicts = self.detect_conflicts()
+        if not conflicts:
+            return None
+
+        first, second = conflicts[0]
+        return f"Warning: {first.name} and {second.name} both happen at {first.time_of_day}."
+
     def filter_by_available_time(self, total_minutes: int) -> List[Task]:
         """Filter tasks to fit within available time"""
         planned_tasks: List[Task] = []
@@ -167,6 +234,3 @@ class Scheduler:
                 planned_tasks.append(task)
                 used_minutes += task.duration_minutes
         return planned_tasks
-
-
-
