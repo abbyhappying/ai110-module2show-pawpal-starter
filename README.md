@@ -69,13 +69,24 @@ pytest
 # Run with coverage:
 pytest --cov
 ```
+Name               Stmts   Miss  Cover
+--------------------------------------
+pawpal_system.py     136     41    70%
+--------------------------------------
+TOTAL                136     41    70%
+=============================== 9 passed in 0.12s ================================
 
 Sample test output:
 
 ```
 # Paste your pytest output here
 ```
+plugins: anyio-3.5.0
+collected 9 items
 
+tests\test_pawpal.py .........                                              [100%]
+
+=============================== 9 passed in 0.04s ================================
 ## 📐 Smarter Scheduling
 
 The scheduler now includes a few lightweight planning features that make the app more useful for a busy pet owner.
